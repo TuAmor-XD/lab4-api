@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"net/http"
 	"time"
 )
@@ -36,4 +37,9 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		)
 	})
 }
+
+type application struct {
+	logger *slog.Logger
+}
+
 
