@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -42,7 +44,51 @@ type application struct {
 	logger *slog.Logger
 }
 
-func main(){
+// GET /v1/healthcheck
+func (app *application) healthcheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "status: available\n")
+	app.logger.Info("healthcheck handler called")
+}
+
+// GET /v1/books
+func (app *application) listBooks(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "list of books (coming soon)\n")
+	app.logger.Info("listBooks handler called")
+}
+
+// GET /v1/books/{id}
+func (app *application) getBook(w http.ResponseWriter, r *http.Request) {
+
+	// Extract ID from route (Go 1.22 feature)
+	id := r.PathValue("id")
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "get book with id: %s\n", id)
+
+	app.logger.Info("getBook handler called", "id", id)
+}
+
+// POST /v1/books
+func (app *application) createBook(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusCreated) // 201
+	fmt.Fprintf(w, "book created (coming soon)\n")
+	app.logger.Info("createBook handler called")
+}
+
+// DELETE /v1/books/{id}
+func (app *application) deleteBook(w http.ResponseWriter, r *http.Request) {
+
+	id := r.PathValue("id")
+
+	w.WriteHeader(http.StatusNoContent) // 204
+
+	// IMPORTANT: 204 responses must NOT have a body.
+	app.logger.Info("deleteBook handler called", "id", id)
+}
+
+func main() {
 	// Create structured logger writing to stdout
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
@@ -50,5 +96,5 @@ func main(){
 	app := &application{
 		logger: logger,
 	}
-	
+
 }
