@@ -97,4 +97,24 @@ func main() {
 		logger: logger,
 	}
 
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /v1/healthcheck", app.healthcheck)
+	mux.HandleFunc("GET /v1/books", app.listBooks)
+	mux.HandleFunc("GET /v1/books/{id}", app.getBook)
+	mux.HandleFunc("POST /v1/books", app.createBook)
+	mux.HandleFunc("DELETE /v1/books/{id}", app.deleteBook)
+
+	//////////////////////////////////////////////////////
+	// Log Startup Message
+	//////////////////////////////////////////////////////
+
+	logger.Info("starting server", "addr", ":4000")
+
+	//////////////////////////////////////////////////////
+	// Wrap Entire Router with Middleware
+	//////////////////////////////////////////////////////
+
+	err := http.ListenAndServe(":4000", loggingMiddleware(mux))
+	log.Fatal(err)
 }
