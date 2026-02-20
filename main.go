@@ -42,4 +42,13 @@ type application struct {
 	logger *slog.Logger
 }
 
+func main(){
+	// Create structured logger writing to stdout
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
+	// Inject logger into application struct
+	app := &application{
+		logger: logger,
+	}
+	
+}
